@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SearchResponse } from '@/types';
+import { isNewItem } from '@/utils';
 
 // This is the backend API that's already built out for the assessment
 // Candidates will call this endpoint from their frontend components
@@ -13,6 +14,10 @@ export async function GET(request: NextRequest) {
   const minPrice = searchParams.get('minPrice');
   const maxPrice = searchParams.get('maxPrice');
   const featured = searchParams.get('featured') === 'true';
+  const ratingsParam = searchParams.get('ratings');
+  const ratings = ratingsParam ? ratingsParam.split(',').map(r => parseInt(r, 10)) : [];
+  const newArrivals = searchParams.get('newArrivals') === 'true';
+  const bestSellers = searchParams.get('bestSellers') === 'true';
 
   // Simulate API delay for realistic loading states
   await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 200));
@@ -52,7 +57,7 @@ export async function GET(request: NextRequest) {
       price: 159.99,
       rating: 4.7,
       imageUrl: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400',
-      createdAt: '2024-01-13T00:00:00Z',
+      createdAt: '2025-06-13T00:00:00Z',
       featured: false
     },
     {
@@ -74,7 +79,7 @@ export async function GET(request: NextRequest) {
       category: 'Electronics',
       tags: ['wireless', 'ergonomic', 'precision', 'gaming'],
       price: 79.99,
-      rating: 4.5,
+      rating: 3.5,
       imageUrl: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
       createdAt: '2024-01-11T00:00:00Z',
       featured: false
@@ -82,7 +87,7 @@ export async function GET(request: NextRequest) {
   ];
 
   // Filter items based on search criteria
-  let filteredItems = mockItems.filter(item => {
+  const filteredItems = mockItems.filter(item => {
     const matchesQuery = !query || 
       item.title.toLowerCase().includes(query.toLowerCase()) ||
       item.description.toLowerCase().includes(query.toLowerCase()) ||
@@ -93,8 +98,11 @@ export async function GET(request: NextRequest) {
     const matchesPrice = (!minPrice || item.price >= parseFloat(minPrice)) &&
                         (!maxPrice || item.price <= parseFloat(maxPrice));
     const matchesFeatured = !featured || item.featured;
+    const matchesRating = !ratings.length || ratings.includes(Math.floor(item.rating));
+    const matchesNewArrivals = !newArrivals || isNewItem(item.createdAt);
+    const matchesBestSellers = !bestSellers || item.rating > 4.5;
 
-    return matchesQuery && matchesCategory && matchesTags && matchesPrice && matchesFeatured;
+    return matchesQuery && matchesCategory && matchesTags && matchesPrice && matchesFeatured && matchesRating && matchesNewArrivals && matchesBestSellers;
   });
 
   // Sort items

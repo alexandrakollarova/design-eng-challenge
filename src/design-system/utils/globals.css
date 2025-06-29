@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+
+/* ----------------------------------------------------------------------- */
+/* Design-token colors as CSS custom properties (one source of truth based on colot tokens)      */
+@theme {
+    /* Brand */
+    --color-primary:        #615fff;
+    --color-primary-light:  #7d7bff;
+    --color-primary-dark:   #4f39f6;
+
+    --color-secondary:        #e12afb;
+    --color-secondary-light:  #f36aff;
+    --color-secondary-dark:   #c800de;
+
+    /* Status */
+    --color-success:        #00bc7d;
+    --color-success-light:  #33e6a2;
+    --color-success-dark:   #009966;
+
+    --color-warning:        #ff6900;
+    --color-warning-light:  #ff944d;
+    --color-warning-dark:   #f54900;
+
+    --color-error:          #fb2c36;
+    --color-error-light:    #ff5a6a;
+    --color-error-dark:     #e7000b;
+
+    --color-info:           #00a6f4;
+    --color-info-light:     #33c6ff;
+    --color-info-dark:      #0084d1;
+}
+
+@layer utilities {
+    /* Background */
+    .bg-background { background-color: #fff; color: #18181b }
+    .dark .bg-background { background-color: #18181b;  color: #fff }
+}
